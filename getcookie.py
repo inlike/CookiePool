@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 import browsercookie
-
+import tldextract
 
 def get_chrome_cookie():
     """
@@ -53,6 +53,25 @@ def get_scrapy_cookie(response):
         cookie_list = items.get(item['domain'], [])
         cookie_list.append(item)
         items[item['domain']] = cookie_list
+    return items
+
+
+def get_text_cookie(websize, text):
+    """
+    传入抓包获得的cookie字符串，解析成webdriver.cookie格式
+    :param websize:
+    :param text:
+    :return:
+    """
+    domain = '.{}.{}'.format(tldextract.extract(websize).domain, tldextract.extract(websize).suffix)
+    items = [(i.split('=')[0].replace(' ', ''), i.split('=')[1]) for i in text.split(';') if '=' in i]
+    items = [{'domain': domain,
+              'name': i[0],
+              'value': i[1],
+              'path': '/',
+              'expiry':'',
+              'secure': '',
+              } for i in items]
     return items
 
 
