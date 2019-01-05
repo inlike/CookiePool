@@ -2,11 +2,17 @@
 import browsercookie
 import tldextract
 
-def get_chrome_cookie():
+"""
+统一cookie数据格式:[{},{}]
+"""
+
+
+def get_chrome_cookie(websize):
     """
     需要将直接获取浏览器的cookie
     :return:dict
     """
+    domain = '.{}.{}'.format(tldextract.extract(websize).domain, tldextract.extract(websize).suffix)
     cookies = browsercookie.chrome()
     items = dict()
     for cookie in cookies:
@@ -15,7 +21,7 @@ def get_chrome_cookie():
                      'path': cookie.path, 'name': cookie.name,
                      'secure': cookie.secure, 'value': cookie.value})
         items[cookie.domain] = item
-    return items
+    return items.get(domain, [])
 
 
 def get_reque_session_cookie(response):
@@ -25,13 +31,11 @@ def get_reque_session_cookie(response):
     :return: dict
     """
     cookies = response.cookies
-    items = dict()
+    items = []
     for cookie in cookies:
-        item = items.get(cookie.domain, [])
-        item.append({'domain': cookie.domain, 'expiry': cookie.expires,
+        items.append({'domain': cookie.domain, 'expiry': cookie.expires,
                      'path': cookie.path, 'name': cookie.name,
                      'secure': cookie.secure, 'value': cookie.value})
-        items[cookie.domain] = item
     return items
 
 
@@ -42,7 +46,7 @@ def get_scrapy_cookie(response):
     :return:
     """
     cookies = response.headers.getlist('Set-Cookie')
-    items = dict()
+    items = []
     for cookie in cookies:
         item = [(i.split('=')[0].lower().replace(' ', ''), i.split('=')[1]) for i
                 in cookie.decode().split(';') if '=' in i]
@@ -50,9 +54,7 @@ def get_scrapy_cookie(response):
         item.append(("name", name))
         item.append(("value", value))
         item = dict(item)
-        cookie_list = items.get(item['domain'], [])
-        cookie_list.append(item)
-        items[item['domain']] = cookie_list
+        items.append(item)
     return items
 
 
