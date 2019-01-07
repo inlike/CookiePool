@@ -27,6 +27,11 @@ def put_cookie(url, data):
 
 
 def get_cookie(url):
+    """
+    获取cookie返回cookie列表
+    :param url:
+    :return:
+    """
     domain = tldextract.extract(url).domain
     key = 'cookies:{}'.format(domain)
     try:
@@ -35,7 +40,21 @@ def get_cookie(url):
         return False
     obj.use_number += 1
     obj.save()
-    data = RedisTools.g
+    data = RedisTools.get_set_all(key)
+    return data
+
+
+def cookie_setting(url, test_type=None, test_url=None, test_sign=None):
+    """设置cookie的检验字段"""
+    domain = tldextract.extract(url).domain
+    try:
+        obj = Cookies.get(Cookies.domain == domain)
+    except BaseException:
+        return False
+    obj.test_type = test_type
+    obj.test_url = test_url
+    obj.test_sign = test_sign
+    obj.save()
 
 
 if __name__ == '__main__':
