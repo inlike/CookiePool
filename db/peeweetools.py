@@ -6,7 +6,7 @@ import datetime
 """peewee提供了一个数据库的封装模型，playhouse.db_url为其连接的一种方式通过数据库的指定格式url连接
 连接后创建完以后需要模型生成表使用db.connect()，db.create_tables([Person, Pet])"""
 
-blog = PooledSqliteDatabase('./cookies.db')
+blog = PooledSqliteDatabase('static/cookies.db')
 
 
 class BaseModel(Model):
