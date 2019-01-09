@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <style type="text/css" >
+        .title{
+            text-align: center;
+            font-size: 30px;
+        }
+        .data{
+            margin:0px auto;
+        }
+        .input_cookie{
+            display: inline-block;
+        }
+
+    </style>
+</head>
+<body>
+<div >
+<h2 class="title">Cookies-Pool</h2>
+    <hr>
+<div>
+    <table border="0" cellspacing="20" class="data">
+        <!--无边框表格-->
+        <tr>
+            <th>DOMAIN</th>
+            <th>COOKIE_COUNT</th>
+            <th>USE_NUMBER</th>
+            <th>TEST_TYPE</th>
+            <th>TEST_URL</th>
+            <th>TEST_SIGN</th>
+            <th>TESTING_DATA</th>
+            <th>INSERT_DATA</th>
+            <th>UPDATE_DATE</th>
+            <th>保存</th>
+            <th>删除</th>
+        </tr>
+        <tr>
+            <form action="/" method="post">
+            <td>.baidu.com</td>
+                <input type="hidden"  name="domain" value=".www.baidu.com">
+            <td>60</td>
+            <td>3699</td>
+            <td><select name="test_type" id="">
+                <option value ="Requests">Requests</option>
+                <option value ="Selenium">Selenium</option>
+                <option value ="Selenium">Null</option>
+            </select></td>
+            <td><input type="text" name="test_url" value="http://www.baidu.com"></td>
+            <td><input type="text" name="test_sign" value="星星知心"></td>
+            <td>2019-1-1-1</td>
+            <td>2019-1-1-1</td>
+            <td>2019-1-1-1</td>
+            <td><button type="submit" name="button" value="save">Save</button></td>
+                <td><button type="submit"  name="button" value="del">Del</button></td>
+            </form>
+        </tr>
+    </table>
+</div>
+    <hr>
+    <div >
+        <div class="input_cookie">
+        <form action="" method="post">
+                <input type="text" name="cookie_text"  >
+                <button type="submit" name="cookie" value="getcookie">提交文本</button>
+        </form>
+            </div>
+        <div class="input_cookie">
+            <form action="">
+                <input type="text" name="cookie_text"  >
+                <button type="submit" name="cookie" value="cookie">获取Chrome Cookie</button>
+        </form>
+            </div>
+    </div>
+</div>
+</body>
+</html>
