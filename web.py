@@ -5,8 +5,6 @@ import tornado.ioloop
 import json
 import time
 import datetime
-from handle.getcookie import *
-from handle.Interface import *
 from db.peeweetools import Cookies
 from handle.getcookie import *
 from handle.Interface import *
@@ -21,21 +19,28 @@ class IndexHandler(tornado.web.RequestHandler):
         self.render("index.html", data=items)
 
     def post(self):
-        post_data = {}
+        post_data = dict()
         for key in self.request.arguments:
-            post_data[key] = self.get_arguments(key)
-        operation = post_data.get("button", None)[0]
+            post_data[key] = self.get_argument(key)
+        print(post_data)
+        operation = post_data.get("button", None)
         if operation == 'save':
-            obj = Cookies().get(domain=post_data['domain'][0])
-            obj.test_type = ''.join(post_data['test_type'])
-            obj.test_url = ''.join(post_data['test_url'])
-            obj.test_sign = ''.join(post_data['test_sign'])
+            if post_data['test_type'] == 'None' or post_data['test_url'] \
+                    == 'None' or post_data['test_sign'] == 'None':
+                self.write(
+                    '<script language="javascript"> alert("有未填项不能更新");'
+                    ' </script>')
+                return self.write("<script>location.href='/';</script>")
+            obj = Cookies().get(domain=post_data['domain'])
+            obj.test_type = post_data['test_type']
+            obj.test_url = post_data['test_url']
+            obj.test_sign = post_data['test_sign']
             obj.save()
             self.write(
                 '<script language="javascript"> alert("更新成功"); </script>')
             return self.write("<script>location.href='/';</script>")
         elif operation == 'del':
-            obj = Cookies().get(domain=post_data['domain'][0])
+            obj = Cookies().get(domain=post_data['domain'])
             obj.delete_instance()
             self.write(
                 '<script language="javascript"> alert("{}删除成功"); </script>'.format(obj.domain))
@@ -79,5 +84,5 @@ if __name__ == "__main__":
         static_path='static',
         template_path="template"
     )
-    app.listen(8000)
+    app.listen(8005)
     tornado.ioloop.IOLoop.current().start()

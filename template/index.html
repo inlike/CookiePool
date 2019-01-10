@@ -52,14 +52,17 @@
 
                 {% if item['test_type'] == 'Requests' %}
                 <option value ="Requests" selected>Requests</option>
-                {% elif item['test_type'] == 'Selenium' %}
+                {% else %}
+                <option value ="Requests" >Requests</option>
+                {% end %}
+
+                {% if item['test_type'] == 'Selenium' %}
                 <option value ="Selenium" selected>Selenium</option>
                 {% else %}
-                <option value ="Selenium" selected>Null</option>
+                <option value ="Selenium" >Selenium</option>
                 {% end %}
-                <option value ="Requests" >Requests</option>
-                <option value ="Requests" >Selenium</option>
-                <option value ="Requests" >Null</option>
+                <option value ="Null" >Null</option>
+
 
             </select></td>
             <td><input type="text" name="test_url" value="{{item['test_url']}}"></td>
@@ -80,15 +83,16 @@
         <div class="get_cookie">
         <form action="/" method="post">
             {% module xsrf_form_html() %}
-                <input type="text" name="cookie_url"  > :
-                <input type="text" name="cookie_text"  >
+                <input type="text" name="cookie_url"  placeholder="解析的网址"> :
+                <input type="text" name="cookie_text"  placeholder="解析的cookie">
                 <button type="submit" name="button" value="analysis_cookie">解析cookie</button>
         </form>
             </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="get_cookie">
             <form action="/" method="post">
                 {% module xsrf_form_html() %}
-                <input type="text" name="cookie_text"  >
+                <input type="text" name="cookie_text" placeholder="需要获取cookie的URL" >
                 <button type="submit" name="button" value="chrome_cookie">获取Chrome Cookie</button>
         </form>
             </div>
