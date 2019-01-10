@@ -26,7 +26,12 @@ class Cookies(BaseModel):
     testing_date = DateTimeField(verbose_name='写入时间', default=datetime.datetime.now)
     insert_date = DateTimeField(verbose_name='写入时间', default=datetime.datetime.now)
     update_date = DateTimeField(verbose_name='更新时间', default=datetime.datetime.now)
-    delete = BooleanField(verbose_name='删除', default=False, null=False)
+    is_delete = BooleanField(verbose_name='删除', default=False, null=False)
+
+    def to_dict(self):
+        objs = Cookies().select()
+        data = [model_to_dict(i) for i in objs]
+        return data
 
 
 def create_tables():

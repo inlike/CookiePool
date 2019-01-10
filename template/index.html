@@ -11,8 +11,10 @@
         .data{
             margin:0px auto;
         }
-        .input_cookie{
+        .get_cookie{
             display: inline-block;
+            text-align:center;
+            margin:0 auto;
         }
 
     </style>
@@ -37,40 +39,57 @@
             <th>保存</th>
             <th>删除</th>
         </tr>
+        {% for item in data  %}
         <tr>
+
             <form action="/" method="post">
-            <td>.baidu.com</td>
-                <input type="hidden"  name="domain" value=".www.baidu.com">
-            <td>60</td>
-            <td>3699</td>
+                {% module xsrf_form_html() %}
+            <td>{{item['domain']}}</td>
+                <input type="hidden"  name="domain" value="{{item['domain']}}">
+            <td>{{item['count']}}</td>
+            <td>{{item['use_number']}}</td>
             <td><select name="test_type" id="">
-                <option value ="Requests">Requests</option>
-                <option value ="Selenium">Selenium</option>
-                <option value ="Selenium">Null</option>
+
+                {% if item['test_type'] == 'Requests' %}
+                <option value ="Requests" selected>Requests</option>
+                {% elif item['test_type'] == 'Selenium' %}
+                <option value ="Selenium" selected>Selenium</option>
+                {% else %}
+                <option value ="Selenium" selected>Null</option>
+                {% end %}
+                <option value ="Requests" >Requests</option>
+                <option value ="Requests" >Selenium</option>
+                <option value ="Requests" >Null</option>
+
             </select></td>
-            <td><input type="text" name="test_url" value="http://www.baidu.com"></td>
-            <td><input type="text" name="test_sign" value="星星知心"></td>
-            <td>2019-1-1-1</td>
-            <td>2019-1-1-1</td>
-            <td>2019-1-1-1</td>
+            <td><input type="text" name="test_url" value="{{item['test_url']}}"></td>
+            <td><input type="text" name="test_sign" value="{{item['test_sign']}}"></td>
+            <td>{{item['testing_date']}}</td>
+            <td>{{item['insert_date']}}</td>
+            <td>{{item['update_date']}}</td>
             <td><button type="submit" name="button" value="save">Save</button></td>
-                <td><button type="submit"  name="button" value="del">Del</button></td>
+                <td><button type="submit"  name="button" value="del">delete</button></td>
             </form>
+
         </tr>
+        {% end %}
     </table>
 </div>
     <hr>
-    <div >
-        <div class="input_cookie">
-        <form action="" method="post">
+    <div style="text-align: center;" >
+        <div class="get_cookie">
+        <form action="/" method="post">
+            {% module xsrf_form_html() %}
+                <input type="text" name="cookie_url"  > :
                 <input type="text" name="cookie_text"  >
-                <button type="submit" name="cookie" value="getcookie">提交文本</button>
+                <button type="submit" name="button" value="analysis_cookie">解析cookie</button>
         </form>
             </div>
-        <div class="input_cookie">
-            <form action="">
+        <div class="get_cookie">
+            <form action="/" method="post">
+                {% module xsrf_form_html() %}
                 <input type="text" name="cookie_text"  >
-                <button type="submit" name="cookie" value="cookie">获取Chrome Cookie</button>
+                <button type="submit" name="button" value="chrome_cookie">获取Chrome Cookie</button>
         </form>
             </div>
     </div>

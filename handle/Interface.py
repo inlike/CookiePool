@@ -24,6 +24,7 @@ def put_cookie(url, data):
         obj.domain = domain
     obj.count = RedisTools.get_set_number(key)
     obj.save()
+    return True
 
 
 def get_cookie(url):
