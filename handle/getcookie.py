@@ -21,7 +21,10 @@ def get_chrome_cookie(websize):
                      'path': cookie.path, 'name': cookie.name,
                      'secure': cookie.secure, 'value': cookie.value})
         items[cookie.domain] = item
-    return items.get(domain, [])
+    data = items.get(domain, [])
+    if not data:
+        return False
+    return data
 
 
 def get_reque_session_cookie(response):
@@ -36,6 +39,8 @@ def get_reque_session_cookie(response):
         items.append({'domain': cookie.domain, 'expiry': cookie.expires,
                      'path': cookie.path, 'name': cookie.name,
                      'secure': cookie.secure, 'value': cookie.value})
+    if not items:
+        return False
     return items
 
 
@@ -55,6 +60,8 @@ def get_scrapy_cookie(response):
         item.append(("value", value))
         item = dict(item)
         items.append(item)
+    if not items:
+        return False
     return items
 
 
@@ -74,6 +81,8 @@ def get_text_cookie(websize, text):
               'expiry':'',
               'secure': '',
               } for i in items]
+    if not items:
+        return False
     return items
 
 

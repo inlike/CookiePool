@@ -67,6 +67,11 @@ class IndexHandler(tornado.web.RequestHandler):
                     ' </script>')
                 return self.write("<script>location.href='/';</script>")
             data = get_chrome_cookie(url)
+            if not data:
+                self.write(
+                    '<script language="javascript"> alert("未发现相关cookie");'
+                    ' </script>')
+                return self.write("<script>location.href='/';</script>")
             feedback = put_cookie(url, data)
             if feedback:
                 self.write(
@@ -84,5 +89,5 @@ if __name__ == "__main__":
         static_path='static',
         template_path="template"
     )
-    app.listen(8005)
+    app.listen(8009)
     tornado.ioloop.IOLoop.current().start()
