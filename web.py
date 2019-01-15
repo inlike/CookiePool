@@ -8,6 +8,7 @@ import datetime
 from db.peeweetools import Cookies
 from handle.getcookie import *
 from handle.Interface import *
+from tornado.websocket import WebSocketHandler
 
 
 class IndexHandler(tornado.web.RequestHandler):
@@ -80,9 +81,23 @@ class IndexHandler(tornado.web.RequestHandler):
                 return self.write("<script>location.href='/';</script>")
 
 
+class ChatHandler(WebSocketHandler):
+
+    def open(self):
+            self.write_message(u"[%s]-[%s]-进入聊天室" % (self.request.remote_ip, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+
+    def on_message(self, message):
+        print(message)
+        self.write_message(u"[%s]-[%s]-说：%s" % (self.request.remote_ip, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), message))
+
+    def check_origin(self, origin):
+        return True  # 允许WebSocket的跨域请求
+
+
 if __name__ == "__main__":
     app = tornado.web.Application([
         (r"/*", IndexHandler),
+        (r'/chat', ChatHandler)
     ],
         xsrf_cookies=True,
         debug=True,
