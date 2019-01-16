@@ -18,13 +18,26 @@
         }
         .ladda-button{
             cursor: pointer;
-            background-color: #1eff92;
+            background-color: #66afaa;
             border-radius: 2px;
             border: 1px solid transparent;
             -webkit-appearance: none;
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
         }
+
+        .container{
+   width:100px;
+   /*border:1px solid #6C9C2C;*/
+   /*height:25px;*/
+ }
+.bar{
+   background:#95CA0D;
+   float:left;
+   height:100%;
+   text-align:center;
+   line-height:150%;
+ }
 
     </style>
 </head>
@@ -51,13 +64,13 @@
 
         </tr>
         {% for item in data  %}
-        <tr>
 
+        <tr class="action">
             <form action="/" method="post">
                 {% module xsrf_form_html() %}
             <td>{{item['domain']}}</td>
                 <input type="hidden"  name="domain" value="{{item['domain']}}">
-            <td>{{item['count']}}</td>
+            <td id={{item['domain']}}count >{{item['count']}}</td>
             <td>{{item['use_number']}}</td>
             <td><select name="test_type" id="">
 
@@ -80,22 +93,26 @@
             <td><input type="text" name="test_sign" value="{{item['test_sign']}}"></td>
             <td>{{item['testing_date']}}</td>
             <td>{{item['insert_date']}}</td>
-            <td>{{item['update_date']}}</td>
+            <td id={{item['domain']}}update_date>{{item['update_date']}}</td>
             <td><button type="submit" name="button" value="save">Save</button></td>
                 <td><button type="submit"  name="button" value="del">delete</button></td>
             </form>
 
             <!--下面是检测的websockerd-->
             <td>
-                <button class="ladda-button" data-color="mint" data-style="expand-right" data-size="l" onclick="sendMsg()" value="{{item['domain']}}">
-                    <span class="ladda-label">检测</span>
-                    <span class="ladda-spinner"></span>
+                <button class="ladda-button" data-color="mint" data-style="expand-right" data-size="l" onclick="sendMsg(this)" value="{{item['domain']}}">
+                    <div class="container">
 
-                    <div class="ladda-progress" style="width: 100px;"></div>
+                   <div class="bar" id={{item['domain']}}bar style="width:0%;"></div>
+                  </div>
+                  <span class="total" id={{item['domain']}}total>检测</span>
+
                 </button>
             </td>
 
+
         </tr>
+
         {% end %}
     </table>
 </div>
@@ -122,15 +139,27 @@
 
 <script type="text/javascript">
 
-        function sendMsg() {
+        function sendMsg(obj) {
+            var msg = obj.value;
+            var bar = document.getElementById(msg+"bar");
+            var total = document.getElementById(msg+"total");
             var ws = new WebSocket("ws://localhost:8009/chat");
+
             ws.onmessage = function(e) {
-                $("#contents").append("<p>" + e.data + "</p>");
+                bar.style.width = e.data+ "%";
+                total.innerHTML = bar.style.width;
+                if (bar.style.width == "100%") {
+                    bar.style.width = "0%";
+                    total.innerHTML = "检测完成";
+                    ws.close()
+                    return
+                }
+                ;
             };
-//            var msg = $(this).val();
-            var msg = "测试";
-            ws.send(msg);
-//            $("#msg").val("");
+            ws.onopen=function () {
+                ws.send(msg);
+            }
+
         }
     </script>
 

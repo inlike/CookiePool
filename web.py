@@ -84,11 +84,15 @@ class IndexHandler(tornado.web.RequestHandler):
 class ChatHandler(WebSocketHandler):
 
     def open(self):
-            self.write_message(u"[%s]-[%s]-进入聊天室" % (self.request.remote_ip, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        print("连接")
+        self.write_message(u"[%s]-[%s]-进入聊天室" % (self.request.remote_ip, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 
     def on_message(self, message):
         print(message)
-        self.write_message(u"[%s]-[%s]-说：%s" % (self.request.remote_ip, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), message))
+        n = 100
+        for i in range(1, n+1):
+            time.sleep(0.1)
+            self.write_message("{}".format(round(i/n, 4)*100))
 
     def check_origin(self, origin):
         return True  # 允许WebSocket的跨域请求
