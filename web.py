@@ -8,6 +8,7 @@ import datetime
 from db.peeweetools import Cookies
 from handle.getcookie import *
 from handle.Interface import *
+from handle.testcookie import TestCookie
 from tornado.websocket import WebSocketHandler
 
 
@@ -43,6 +44,7 @@ class IndexHandler(tornado.web.RequestHandler):
         elif operation == 'del':
             obj = Cookies().get(domain=post_data['domain'])
             obj.delete_instance()
+            RedisTools.del_key('cookies:{}'.format(post_data['domain']))
             self.write(
                 '<script language="javascript"> alert("{}删除成功"); </script>'.format(obj.domain))
             return self.write("<script>location.href='/';</script>")
@@ -85,14 +87,58 @@ class ChatHandler(WebSocketHandler):
 
     def open(self):
         print("连接")
-        self.write_message(u"[%s]-[%s]-进入聊天室" % (self.request.remote_ip, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        # self.write_message("正在检测")
 
     def on_message(self, message):
         print(message)
-        n = 100
-        for i in range(1, n+1):
-            time.sleep(0.1)
-            self.write_message("{}".format(round(i/n, 4)*100))
+        domain = message
+        key = "cookies:{}".format(domain)
+        data = {'proportion': '', 'update': '', 'count': '', 'error': ''}
+        obj = Cookies.get(domain=domain)
+        cookie_count = obj.count
+        test_type = obj.test_type
+        test_url = obj.test_url
+        test_sgin = obj.test_sign
+        if test_type or test_url or test_sgin:
+            pass
+        else:
+            data['error'] = 1
+            return self.write_message(data)
+        test_date = obj.testing_date
+        cookies = RedisTools.get_set_all(key)
+
+        if test_type.upper() == "REQUESTS":
+            for index, cookie in enumerate(cookies):
+
+                if TestCookie.requests_test(test_url, test_sgin, cookie):
+                    pass
+                else:
+                    RedisTools.delete_set(key, json.dumps(cookie))
+                data['proportion'] = round(index + 1 / cookie_count, 4) * 100
+                if data['proportion'] < 100:
+                    self.write_message(data)
+        else:
+            test = TestCookie()
+            for index, cookie in enumerate(cookies):
+                if test.selenium_test(test_url, test_sgin, cookie):
+                    pass
+                else:
+                    RedisTools.delete_set(key, json.dumps(cookie))
+                data['proportion'] = round(index+1/cookie_count, 4)*100
+                if data['proportion'] < 100:
+                    self.write_message(data)
+            test.close()
+        count = RedisTools.get_set_number(key)
+        obj.update_date = datetime.datetime.now()
+        data['update'] = str(obj.update_date)
+        data['count'] = count
+        if count:
+            obj.count = data['count'] = count
+            obj.save()
+        else:
+            obj.delete_instance()
+        print(data)
+        self.write_message(data)
 
     def check_origin(self, origin):
         return True  # 允许WebSocket的跨域请求
@@ -108,5 +154,5 @@ if __name__ == "__main__":
         static_path='static',
         template_path="template"
     )
-    app.listen(8009)
+    app.listen(8016)
     tornado.ioloop.IOLoop.current().start()

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>index</title>
+    <title>Cookie—Pool</title>
     <style type="text/css" >
         .title{
             text-align: center;
@@ -93,6 +93,8 @@
             <td><input type="text" name="test_sign" value="{{item['test_sign']}}"></td>
             <td>{{item['testing_date']}}</td>
             <td>{{item['insert_date']}}</td>
+
+
             <td id={{item['domain']}}update_date>{{item['update_date']}}</td>
             <td><button type="submit" name="button" value="save">Save</button></td>
                 <td><button type="submit"  name="button" value="del">delete</button></td>
@@ -143,19 +145,29 @@
             var msg = obj.value;
             var bar = document.getElementById(msg+"bar");
             var total = document.getElementById(msg+"total");
-            var ws = new WebSocket("ws://localhost:8009/chat");
-
+            var count = document.getElementById(msg+"count");
+            var update = document.getElementById(msg+"update_date");
+            var ws = new WebSocket("ws://localhost:8016/chat");
+            total.innerHTML = "等待检测";
             ws.onmessage = function(e) {
-                bar.style.width = e.data+ "%";
+                var data =  new Function("return" + e.data)();
+                if (data['error']==1){
+                    total.style.color = '#263bb4';
+                    return total.innerHTML = "不能检测！";
+                    ws.close();
+                };
+                bar.style.width = data['proportion']+ "%";
                 total.innerHTML = bar.style.width;
                 if (bar.style.width == "100%") {
                     bar.style.width = "0%";
                     total.innerHTML = "检测完成";
-                    ws.close()
+                    count.innerHTML = data['count'];
+                    update.innerHTML = data['update'];
+                    ws.close();
                     return
                 }
-                ;
             };
+
             ws.onopen=function () {
                 ws.send(msg);
             }

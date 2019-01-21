@@ -61,15 +61,14 @@ class RedisTools:
         """
         返回指定集合中所有元素
         :param key:
-        :return:
+        :return:list
         """
         if not RedisTools.get_set_number(key):
             return None
         data = redis_cli.smembers(key)
-        try:
-            return json.loads(data)
-        except:
-            return data.decode()
+        data = list(data)
+        data = [json.loads(item.decode()) for item in data]
+        return data
 
     @staticmethod
     def delete_set(key, *data):
@@ -81,6 +80,10 @@ class RedisTools:
         """
         n = redis_cli.srem(key, *data)
         return n
+
+    @staticmethod
+    def del_key(key):
+        redis_cli.delete(key)
 
     @staticmethod
     def insert_to_list_redis(key, data):

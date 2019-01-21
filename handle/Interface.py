@@ -2,6 +2,7 @@
 
 from db.redistools import RedisTools
 from db.peeweetools import Cookies
+import json
 import tldextract
 
 
@@ -14,6 +15,7 @@ def put_cookie(url, data):
     """
     domain = tldextract.extract(url).domain
     key = 'cookies:{}'.format(domain)
+    data = json.dumps(data)
     RedisTools.insert_to_set_redis(key, data)
     try:
         obj = Cookies.get(Cookies.domain == domain)
