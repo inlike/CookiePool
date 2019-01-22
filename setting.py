@@ -7,3 +7,6 @@ CHORME = {
                      '--hide-scrollbars', 'blink-settings=imagesEnabled=false',
                      ] # '--headless'
 }
+
+REDIS_URL = 'redis://auth:@127.0.0.1:6379'
+

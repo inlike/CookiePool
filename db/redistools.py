@@ -2,10 +2,11 @@
 import json
 import redis
 from scrapy_redis import get_redis
+from setting import REDIS_URL
 
-# redis_cli = get_redis(url=REDIS_URL)
-redis_cli = redis.StrictRedis(
-        host='127.0.0.1', port=6379)
+redis_cli = get_redis(url=REDIS_URL)
+# redis_cli = redis.StrictRedis(
+#         host='127.0.0.1', port=6379)
 
 
 class RedisTools:

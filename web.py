@@ -5,11 +5,34 @@ import tornado.ioloop
 import json
 import time
 import datetime
+import random
 from db.peeweetools import Cookies
 from handle.getcookie import *
-from handle.Interface import *
+from handle.Interface import get_cookie, put_cookie, cookie_setting
 from handle.testcookie import TestCookie
 from tornado.websocket import WebSocketHandler
+
+
+class Random(tornado.web.RequestHandler):
+
+    def get(self):
+        url = self.get_argument('url', None)
+        if not url:
+            self.render('None')
+        lists = get_cookie(url)
+        self.set_header('Content-Type', 'text/json')
+        self.write(json.dumps(random.choice(lists)))
+
+
+class All(tornado.web.RequestHandler):
+
+    def get(self):
+        url = self.get_argument('url', None)
+        if not url:
+            self.render('None')
+        lists = get_cookie(url)
+        self.set_header('Content-Type', 'text/json')
+        self.write(json.dumps(lists))
 
 
 class IndexHandler(tornado.web.RequestHandler):
@@ -147,7 +170,9 @@ class ChatHandler(WebSocketHandler):
 if __name__ == "__main__":
     app = tornado.web.Application([
         (r"/*", IndexHandler),
-        (r'/chat', ChatHandler)
+        (r'/chat', ChatHandler),
+        (r'/random', Random),
+        (r'/all', All)
     ],
         xsrf_cookies=True,
         debug=True,
