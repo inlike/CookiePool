@@ -170,6 +170,8 @@ TEST_URL：含有验证信息的页面地址如：登录页、个人资料页面
 TEST_SIGN：鉴别有效cookie的字段如用户名等,多个cookie的不同字段用英;连接起来<p>
 三个字段必须配置，不配置不能保存；配置后点击保存，然后再点击检测。
 
+# [项目github地址](https://github.com/dhfjcuff/Cookie-Pool),觉得不错就给个星星吧
+
 
 
 
