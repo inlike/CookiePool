@@ -1,5 +1,5 @@
 redis==2.10.6
-requests==2.18.4
+requests==2.20.0
 peewee==3.6.4
 tornado==5.0.2
 tldextract==2.2.0
