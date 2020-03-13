@@ -7,6 +7,7 @@ import time
 import datetime
 import random
 from db.peeweetools import Cookies
+from db.redistools import RedisTools
 from handle.getcookie import *
 from handle.Interface import get_cookie, put_cookie, cookie_setting
 from handle.testcookie import TestCookie

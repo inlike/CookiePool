@@ -7,13 +7,20 @@ import tldextract
 """
 
 
-def get_chrome_cookie(websize):
+def get_chrome_cookie(url):
     """
     需要将直接获取浏览器的cookie
     :return:dict
     """
-    domain = '.{}.{}'.format(tldextract.extract(websize).domain, tldextract.extract(websize).suffix)
-    cookies = browsercookie.chrome()
+    domain = '.' + tldextract.extract(url).registered_domain
+
+    chrome = browsercookie.Chrome()
+    cookies = []
+    try:
+        for item in chrome.get_cookies():
+            cookies.append(item)
+    except BaseException as e:
+        pass
     items = dict()
     for cookie in cookies:
         item = items.get(cookie.domain, [])
@@ -22,6 +29,7 @@ def get_chrome_cookie(websize):
                      'secure': cookie.secure, 'value': cookie.value})
         items[cookie.domain] = item
     data = items.get(domain, [])
+
     if not data:
         return False
     return data
@@ -37,8 +45,8 @@ def get_reque_session_cookie(response):
     items = []
     for cookie in cookies:
         items.append({'domain': cookie.domain, 'expiry': cookie.expires,
-                     'path': cookie.path, 'name': cookie.name,
-                     'secure': cookie.secure, 'value': cookie.value})
+                      'path': cookie.path, 'name': cookie.name,
+                      'secure': cookie.secure, 'value': cookie.value})
     if not items:
         return False
     return items
@@ -78,7 +86,7 @@ def get_text_cookie(websize, text):
               'name': i[0],
               'value': i[1],
               'path': '/',
-              'expiry':'',
+              'expiry': '',
               'secure': '',
               } for i in items]
     if not items:
